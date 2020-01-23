@@ -2,8 +2,8 @@
     "SimSyn4Net": {
         "version": "NeuroMLlite v0.1.9", 
         "network": "Syn4Net.json", 
-        "duration": 1000.0, 
-        "dt": 0.01, 
+        "duration": 500.0, 
+        "dt": 0.025, 
         "recordTraces": {
             "all": "*"
         }, 
@@ -11,7 +11,7 @@
             "pop0": "*"
         }, 
         "recordVariables": {
-            "synapses:AMPA:0/g": {
+            "synapses:AMPA_noplast:0/g": {
                 "pop1": "*"
             }
         }

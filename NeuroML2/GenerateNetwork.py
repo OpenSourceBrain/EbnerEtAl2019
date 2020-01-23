@@ -8,7 +8,7 @@ import sys
 net = Network(id='Syn4Net')
 net.notes = 'Syn4Net: synaptic properties'
 net.parameters = { 'input_amp':   0.23,
-                   'weight':      1.01}
+                   'weight':      0.001}
                    #'tau_syn':     2} 
 
 cell = Cell(id='passiveCell', neuroml2_source_file='passiveCell.cell.nml')
@@ -30,7 +30,7 @@ p1 = Population(id='pop1', size=1, component=cell.id, properties={'color':'0 1 0
 net.populations.append(p0)
 net.populations.append(p1)
 
-syn = Synapse(id='AMPA', neuroml2_source_file='AMPA_NMDA.synapse.nml')
+syn = Synapse(id='AMPA_noplast', neuroml2_source_file='fourPathwaySyn.synapse.nml')
 net.synapses.append(syn)
                       
 
@@ -58,8 +58,8 @@ new_file = net.to_json_file('%s.json'%net.id)
 
 sim = Simulation(id='Sim%s'%net.id,
                  network=new_file,
-                 duration='1000',
-                 dt='0.01',
+                 duration='500',
+                 dt='0.025',
                  recordTraces={'all':'*'},
                  recordVariables={'synapses:%s:0/g'%syn.id:{'pop1':'*'}},
                  recordSpikes={'pop0':'*'})

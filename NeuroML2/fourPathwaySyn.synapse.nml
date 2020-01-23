@@ -6,11 +6,11 @@
     
     
     <!--
-        WORK IN PROGRESS!! See https://github.com/OpenSourceBrain/BonoClopath2017
+        WORK IN PROGRESS!! 
     -->
     
 
-    <ComponentType name="clopathPlasticSynapse"
+    <ComponentType name="fourPathwaySyn"
                    extends="expOneSynapse"
                    description="...">
        
@@ -162,22 +162,10 @@
         
     </clopathPlasticSynapse>
      
-    <expOneSynapse id="AMPA_noplast" tauDecay="2ms" gbase="1.5nS" erev="0mV">
-        <notes>AMPA synapse</notes>
-    </expOneSynapse>
+    <expTwoSynapse id="AMPA_noplast" tauRise="0.2ms" tauDecay="2ms" gbase="1uS" erev="0mV">
+        <notes>AMPA synapse, no plasticity...</notes>
+    </expTwoSynapse>
     
-    
-    <clopathPlasticSynapse id="NMDA" gbase="1.5nS"  
-                            erev="0mV" tauDecay="50ms">
-        <notes>NMDA synapse</notes>
-        <blockMechanism type="voltageConcDepBlockMechanism" species="mg" blockConcentration="1 mM"
-                                      scalingConc="3.57 mM" scalingVolt="16.129032258 mV"/>
-    </clopathPlasticSynapse>
-    
-    
-    <doubleSynapse id="AMPA_NMDA" synapse1="AMPA" synapse1Path="./AMPA" synapse2="NMDA" synapse2Path="./NMDA">
-        <notes>A single "synapse" which contains both AMPA and NMDA. Hopefully the need for extra synapse1Path/synapse2Path attributes can be removed in later versions.</notes>
-    </doubleSynapse>
 
 </neuroml>
 

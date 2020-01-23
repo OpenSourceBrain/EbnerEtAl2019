@@ -5,7 +5,7 @@ import numpy as np
 import sys
 import matplotlib.pyplot as plt
 
-duration = 200
+duration = 500
 dt = 0.025
 
 def get_random_stim(rate):
@@ -19,15 +19,17 @@ def get_random_stim(rate):
     return stimNc
 
 soma = h.Section()
-
+soma.L =17.841242
+soma.diam=17.841242
 soma.push() 
 soma.insert("pas")
+soma.g_pas = 0.0003
 syn = h.ExpSyn (0.5, sec = soma)  
 
 stim = h.IClamp(0.5, sec = soma)
 stim.delay = 100.0
 stim.dur = 5.0
-stim.amp = 200
+stim.amp = 0.4
 
 def get_base_syn():
     syn = h.Syn4P (0.5, sec = soma)
@@ -40,7 +42,14 @@ def get_base_syn():
 
 
 
+def get_ampa_syn():
+    syn = get_base_syn()
+    syn.s_ampa = 1
+    syn.s_nmda = 0
+    return syn
+
 syn = get_base_syn()
+syn = get_ampa_syn()
 
 def run_sim(rate=10):
 
@@ -50,7 +59,7 @@ def run_sim(rate=10):
     vec_nc = h.Vector()
 
     nc = h.NetCon(stimNc, syn)
-    nc.weight[0] = 1
+    nc.weight[0] = 0.001
 
     nc.record(vec_nc)
 
@@ -90,6 +99,11 @@ def run_sim(rate=10):
     print("Spike times: %s"%['%.3f'%t for t in vec_nc])
     print("Num spikes: %s; avg rate: %s Hz; avg isi: %s ms; std isi: %s ms"%(len(spikes),hz,np.average(isis),np.std(isis)))
     #assert abs((hz-rate)/rate)<0.01
+
+    v_file = open('v.dat', 'w')
+    for i in range(len(vec['t'])):
+        v_file.write('%s\t%s\n'%(vec['t'][i]/1000,vec['v'][i]/1000))
+    v_file.close()
 
 
     if not '-nogui' in sys.argv:

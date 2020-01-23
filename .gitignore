@@ -7,3 +7,8 @@
 /NeuroML2/SimpleNet.net.nml
 /NeuroML2/SimpleNet/RS.cell.nml
 report.*.txt
+/NEURON/*.dat
+x86_64
+/NeuroML2/*.mod
+*_nrn.py
+/NeuroML2/*.hoc

@@ -32,7 +32,7 @@
 
             <membraneProperties>
                         
-                <channelDensity id="leak" ionChannel="passiveChan" condDensity="3.0 S_per_m2" erev="-54.3mV" ion="non_specific"/>
+                <channelDensity id="leak" ionChannel="passiveChan" condDensity="3.0 S_per_m2" erev="-70.0mV" ion="non_specific"/>
 
                 <spikeThresh value="-20mV"/>
                 <specificCapacitance value="1.0 uF_per_cm2"/>
@@ -41,7 +41,7 @@
             </membraneProperties>
 
             <intracellularProperties>
-                <resistivity value="0.03 kohm_cm"/>   <!-- Note: not used in single compartment simulations -->
+                <resistivity value="0.0354  kohm_cm"/>   <!-- Note: not used in single compartment simulations -->
             </intracellularProperties>
 
         </biophysicalProperties>

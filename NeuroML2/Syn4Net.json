@@ -11,6 +11,11 @@
                 "passiveCell": {
                     "neuroml2_source_file": "passiveCell.cell.nml"
                 }
+            }, 
+            {
+                "spkArr1": {
+                    "neuroml2_source_file": "inputs.nml"
+                }
             }
         ], 
         "synapses": [
@@ -28,6 +33,16 @@
                         "start": 200.0, 
                         "stop": 800.0, 
                         "amplitude": "input_amp"
+                    }
+                }
+            }, 
+            {
+                "i_clamp1": {
+                    "pynn_input": "DCSource", 
+                    "parameters": {
+                        "start": 200.0, 
+                        "stop": 205.0, 
+                        "amplitude": 0.4
                     }
                 }
             }
@@ -48,7 +63,7 @@
             {
                 "pop0": {
                     "size": 1, 
-                    "component": "passiveCell", 
+                    "component": "spkArr1", 
                     "properties": {
                         "color": "1 0 0"
                     }, 
@@ -86,9 +101,9 @@
         ], 
         "inputs": [
             {
-                "stim": {
-                    "input_source": "i_clamp", 
-                    "population": "pop0", 
+                "stim1": {
+                    "input_source": "i_clamp1", 
+                    "population": "pop1", 
                     "percentage": 100.0
                 }
             }

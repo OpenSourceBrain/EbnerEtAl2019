@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<neuroml xmlns="http://www.neuroml.org/schema/neuroml2"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.neuroml.org/schema/neuroml2  ../Schemas/NeuroML2/NeuroML_v2beta4.xsd"
+    id="inputs">
+
+
+    <spikeArray id="spkArr1">
+      <spike id="0" time="100 ms"/>
+      <spike id="1" time="120 ms"/>
+      <spike id="2" time="140 ms"/>
+    </spikeArray>
+ 
+
+</neuroml>

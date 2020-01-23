@@ -10,11 +10,17 @@
         <notes>AMPA synapse, no plasticity...</notes>
     </expTwoSynapse>
     <pulseGenerator id="i_clamp" delay="200.0ms" duration="600.0ms" amplitude="0.23nA"/>
+    <pulseGenerator id="i_clamp1" delay="200.0ms" duration="5.0ms" amplitude="0.4nA"/>
+    <spikeArray id="spkArr1">
+        <spike id="0" time="100 ms"/>
+        <spike id="1" time="120 ms"/>
+        <spike id="2" time="140 ms"/>
+    </spikeArray>
     <network id="Syn4Net">
         <notes>Syn4Net: synaptic properties</notes>
         <property tag="recommended_dt_ms" value="0.025"/>
         <property tag="recommended_duration_ms" value="500.0"/>
-        <population id="pop0" component="passiveCell" size="1" type="populationList">
+        <population id="pop0" component="spkArr1" size="1" type="populationList">
             <property tag="color" value="1 0 0"/>
             <property tag="region" value="region1"/>
             <instance id="0">
@@ -29,10 +35,10 @@
             </instance>
         </population>
         <projection id="proj0" presynapticPopulation="pop0" postsynapticPopulation="pop1" synapse="AMPA_noplast">
-            <connectionWD id="0" preCellId="../pop0/0/passiveCell" postCellId="../pop1/0/passiveCell" weight="0.001" delay="0ms"/>
+            <connectionWD id="0" preCellId="../pop0/0/spkArr1" postCellId="../pop1/0/passiveCell" weight="0.001" delay="0ms"/>
         </projection>
-        <inputList id="stim" population="pop0" component="i_clamp">
-            <input id="0" target="../pop0/0/passiveCell" destination="synapses"/>
+        <inputList id="stim1" population="pop1" component="i_clamp1">
+            <input id="0" target="../pop1/0/passiveCell" destination="synapses"/>
         </inputList>
     </network>
 </neuroml>

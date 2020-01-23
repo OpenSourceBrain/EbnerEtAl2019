@@ -15,7 +15,15 @@ def get_random_stim(rate):
     stimNc.start = 0     
     stimNc.number = 1e9
     stimNc.interval = 1000./rate
+    return stimNc
+
+def get_timed_stim():
     
+    stimNc = h.NetStim()
+    stimNc.noise = 0    
+    stimNc.start = 100 
+    stimNc.number = 3
+    stimNc.interval = 20
     return stimNc
 
 soma = h.Section()
@@ -27,7 +35,7 @@ soma.g_pas = 0.0003
 syn = h.ExpSyn (0.5, sec = soma)  
 
 stim = h.IClamp(0.5, sec = soma)
-stim.delay = 100.0
+stim.delay = 200.0
 stim.dur = 5.0
 stim.amp = 0.4
 
@@ -56,6 +64,8 @@ def run_sim(rate=10):
     print('Running simulation of %s with %s Hz input'%(duration, rate))
 
     stimNc = get_random_stim(rate)
+    stimNc = get_timed_stim()
+    
     vec_nc = h.Vector()
 
     nc = h.NetCon(stimNc, syn)

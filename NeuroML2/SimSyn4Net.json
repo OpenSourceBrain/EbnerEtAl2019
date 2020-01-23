@@ -5,7 +5,7 @@
         "duration": 500.0, 
         "dt": 0.025, 
         "recordTraces": {
-            "all": "*"
+            "pop1": "*"
         }, 
         "recordSpikes": {
             "pop0": "*"

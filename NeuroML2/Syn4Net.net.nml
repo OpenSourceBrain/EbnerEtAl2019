@@ -6,9 +6,7 @@
         input_amp = 0.23
         weight = 0.001</notes>
     <include href="passiveCell.cell.nml"/>
-    <expTwoSynapse id="AMPA_noplast" gbase="1uS" erev="0mV" tauDecay="2ms" tauRise="0.2ms">
-        <notes>AMPA synapse, no plasticity...</notes>
-    </expTwoSynapse>
+    <include href="fourPathwaySyn.synapse.nml"/>
     <pulseGenerator id="i_clamp" delay="200.0ms" duration="600.0ms" amplitude="0.23nA"/>
     <pulseGenerator id="i_clamp1" delay="200.0ms" duration="5.0ms" amplitude="0.4nA"/>
     <spikeArray id="spkArr1">
@@ -18,7 +16,7 @@
     </spikeArray>
     <network id="Syn4Net">
         <notes>Syn4Net: synaptic properties</notes>
-        <property tag="recommended_dt_ms" value="0.025"/>
+        <property tag="recommended_dt_ms" value="0.01"/>
         <property tag="recommended_duration_ms" value="500.0"/>
         <population id="pop0" component="spkArr1" size="1" type="populationList">
             <property tag="color" value="1 0 0"/>

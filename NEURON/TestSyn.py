@@ -6,7 +6,7 @@ import sys
 import matplotlib.pyplot as plt
 
 duration = 500
-dt = 0.025
+dt = 0.01
 
 def get_random_stim(rate):
     
@@ -56,8 +56,15 @@ def get_ampa_syn():
     syn.s_nmda = 0
     return syn
 
+def get_nmda_syn():
+    syn = get_base_syn()
+    syn.s_ampa = 0
+    syn.s_nmda = 1
+    return syn
+
 syn = get_base_syn()
 syn = get_ampa_syn()
+#syn = get_nmda_syn()
 
 def run_sim(rate=10):
 
@@ -70,6 +77,7 @@ def run_sim(rate=10):
 
     nc = h.NetCon(stimNc, syn)
     nc.weight[0] = 0.001
+    nc.delay = 0
 
     nc.record(vec_nc)
 
@@ -110,10 +118,12 @@ def run_sim(rate=10):
     print("Num spikes: %s; avg rate: %s Hz; avg isi: %s ms; std isi: %s ms"%(len(spikes),hz,np.average(isis),np.std(isis)))
     #assert abs((hz-rate)/rate)<0.01
 
-    v_file = open('v.dat', 'w')
-    for i in range(len(vec['t'])):
-        v_file.write('%s\t%s\n'%(vec['t'][i]/1000,vec['v'][i]/1000))
-    v_file.close()
+    scales = {'v':0.001, 'g':1e-6}
+    for var in scales:
+        var_file = open('%s.dat'%var, 'w')
+        for i in range(len(vec['t'])):
+            var_file.write('%s\t%s\n'%(vec['t'][i]/1000,vec[var][i]*scales[var]))
+        var_file.close()
 
 
     if not '-nogui' in sys.argv:
@@ -132,8 +142,8 @@ def run_sim(rate=10):
         plt.figure()
         plt.title('Weights')
         plt.plot(vec['t'],vec['w'],label='w')
-        #plt.plot(vec['t'],vec['w_pre'],label='w_pre')
-        #plt.plot(vec['t'],vec['w_post'],label='w_post')
+        plt.plot(vec['t'],vec['w_pre'],label='w_pre')
+        plt.plot(vec['t'],vec['w_post'],label='w_post')
         plt.legend()
         
         plt.figure()

@@ -34,10 +34,15 @@ soma.insert("pas")
 soma.g_pas = 0.0003
 syn = h.ExpSyn (0.5, sec = soma)  
 
-stim = h.IClamp(0.5, sec = soma)
-stim.delay = 200.0
-stim.dur = 5.0
-stim.amp = 0.4
+stim1 = h.IClamp(0.5, sec = soma)
+stim1.delay = 50.0
+stim1.dur = 5.0
+stim1.amp = 0.4
+
+stim2 = h.IClamp(0.5, sec = soma)
+stim2.delay = 200.0
+stim2.dur = 5.0
+stim2.amp = 0.4
 
 def get_base_syn():
     syn = h.Syn4P (0.5, sec = soma)
@@ -54,6 +59,13 @@ def get_ampa_syn():
     syn = get_base_syn()
     syn.s_ampa = 1
     syn.s_nmda = 0
+    return syn
+
+def get_preLTD_syn():
+    syn = get_base_syn()
+    syn.s_ampa = 1
+    syn.s_nmda = 0
+    syn.A_LTD_pre = 0.1
     return syn
 
 def get_nmda_syn():
@@ -84,9 +96,10 @@ def run_sim(rate=10):
     vec = {}
     states = ['G', 'Z', 'E','C','P','X']
     states = ['u_bar', 'E','T', 'flag_D']
-    #A_vals = ['A_LTD_pre', 'A_LTP_pre', 'A_LTD_post', 'A_LTP_post']
+    A_vals = ['A_LTD_pre', 'A_LTP_pre', 'A_LTD_post', 'A_LTP_post']
+    A_vals = ['A_LTD_pre']
     
-    for var in ['v','t','g','g_ampa','g_nmda','w_pre','w_post', 'w'] + states:
+    for var in ['v','t','g','g_ampa','g_nmda','w_pre','w_post', 'w'] + states + A_vals:
         vec[var] = h.Vector()
         if var!='v' and var!='t':
             exec("print('Recording:  %s')"%var)
@@ -119,7 +132,7 @@ def run_sim(rate=10):
     print("Num spikes: %s; avg rate: %s Hz; avg isi: %s ms; std isi: %s ms"%(len(spikes),hz,np.average(isis),np.std(isis)))
     #assert abs((hz-rate)/rate)<0.01
 
-    scales = {'v':0.001, 'g':1e-6, 'u_bar':1}
+    scales = {'v':0.001, 'g':1e-6, 'u_bar':1, 'T':1}
     for var in scales:
         var_file = open('%s.dat'%var, 'w')
         for i in range(len(vec['t'])):
@@ -143,13 +156,19 @@ def run_sim(rate=10):
         plt.figure()
         plt.title('Weights')
         plt.plot(vec['t'],vec['w'],label='w')
-        plt.plot(vec['t'],vec['w_pre'],label='w_pre')
-        plt.plot(vec['t'],vec['w_post'],label='w_post')
+        #plt.plot(vec['t'],vec['w_pre'],label='w_pre')
+        #plt.plot(vec['t'],vec['w_post'],label='w_post')
         plt.legend()
         
         plt.figure()
         plt.title('States')
         for s in states: 
+            plt.plot(vec['t'],vec[s],label=s)
+        plt.legend()
+        
+        plt.figure()
+        plt.title('A vals')
+        for s in A_vals: 
             plt.plot(vec['t'],vec[s],label=s)
         plt.legend()
         

@@ -3,12 +3,13 @@
     Generated network: Syn4Net
     Generation seed: 1234
     NeuroMLlite parameters: 
-        input_amp = 0.23
+        stim1_delay = 50
+        stim2_delay = 200
         weight = 0.001</notes>
     <include href="passiveCell.cell.nml"/>
     <include href="fourPathwaySyn.synapse.nml"/>
-    <pulseGenerator id="i_clamp" delay="200.0ms" duration="600.0ms" amplitude="0.23nA"/>
-    <pulseGenerator id="i_clamp1" delay="200.0ms" duration="5.0ms" amplitude="0.4nA"/>
+    <pulseGenerator id="stim1" delay="50.0ms" duration="5.0ms" amplitude="0.4nA"/>
+    <pulseGenerator id="stim2" delay="200.0ms" duration="5.0ms" amplitude="0.4nA"/>
     <spikeArray id="spkArr1">
         <spike id="0" time="100 ms"/>
         <spike id="1" time="120 ms"/>
@@ -21,6 +22,7 @@
         <population id="pop0" component="spkArr1" size="1" type="populationList">
             <property tag="color" value="1 0 0"/>
             <property tag="region" value="region1"/>
+            <property tag="radius" value="10"/>
             <instance id="0">
                 <location x="966.453535692138757" y="44.073259917535268" z="7.491470058587191"/>
             </instance>
@@ -35,7 +37,10 @@
         <projection id="proj0" presynapticPopulation="pop0" postsynapticPopulation="pop1" synapse="AMPA_noplast">
             <connectionWD id="0" preCellId="../pop0/0/spkArr1" postCellId="../pop1/0/passiveCell" weight="0.001" delay="0ms"/>
         </projection>
-        <inputList id="stim1" population="pop1" component="i_clamp1">
+        <inputList id="i_stim1" population="pop1" component="stim1">
+            <input id="0" target="../pop1/0/passiveCell" destination="synapses"/>
+        </inputList>
+        <inputList id="i_stim2" population="pop1" component="stim2">
             <input id="0" target="../pop1/0/passiveCell" destination="synapses"/>
         </inputList>
     </network>

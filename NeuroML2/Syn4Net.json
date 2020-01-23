@@ -2,8 +2,9 @@
     "Syn4Net": {
         "version": "NeuroMLlite v0.1.9", 
         "parameters": {
+            "stim2_delay": 200, 
             "weight": 0.001, 
-            "input_amp": 0.23
+            "stim1_delay": 50
         }, 
         "notes": "Syn4Net: synaptic properties", 
         "cells": [
@@ -27,21 +28,21 @@
         ], 
         "input_sources": [
             {
-                "i_clamp": {
+                "stim1": {
                     "pynn_input": "DCSource", 
                     "parameters": {
-                        "start": 200.0, 
-                        "stop": 800.0, 
-                        "amplitude": "input_amp"
+                        "start": "stim1_delay", 
+                        "stop": "stim1_delay+5", 
+                        "amplitude": 0.4
                     }
                 }
             }, 
             {
-                "i_clamp1": {
+                "stim2": {
                     "pynn_input": "DCSource", 
                     "parameters": {
-                        "start": 200.0, 
-                        "stop": 205.0, 
+                        "start": "stim2_delay", 
+                        "stop": "stim2_delay+5", 
                         "amplitude": 0.4
                     }
                 }
@@ -65,7 +66,8 @@
                     "size": 1, 
                     "component": "spkArr1", 
                     "properties": {
-                        "color": "1 0 0"
+                        "color": "1 0 0", 
+                        "radius": 10
                     }, 
                     "random_layout": {
                         "region": "region1"
@@ -101,8 +103,15 @@
         ], 
         "inputs": [
             {
-                "stim1": {
-                    "input_source": "i_clamp1", 
+                "i_stim1": {
+                    "input_source": "stim1", 
+                    "population": "pop1", 
+                    "percentage": 100.0
+                }
+            }, 
+            {
+                "i_stim2": {
+                    "input_source": "stim2", 
                     "population": "pop1", 
                     "percentage": 100.0
                 }

@@ -83,6 +83,7 @@ def run_sim(rate=10):
 
     vec = {}
     states = ['G', 'Z', 'E','C','P','X']
+    states = ['u_bar', 'E','T', 'flag_D']
     #A_vals = ['A_LTD_pre', 'A_LTP_pre', 'A_LTD_post', 'A_LTP_post']
     
     for var in ['v','t','g','g_ampa','g_nmda','w_pre','w_post', 'w'] + states:
@@ -118,7 +119,7 @@ def run_sim(rate=10):
     print("Num spikes: %s; avg rate: %s Hz; avg isi: %s ms; std isi: %s ms"%(len(spikes),hz,np.average(isis),np.std(isis)))
     #assert abs((hz-rate)/rate)<0.01
 
-    scales = {'v':0.001, 'g':1e-6}
+    scales = {'v':0.001, 'g':1e-6, 'u_bar':1}
     for var in scales:
         var_file = open('%s.dat'%var, 'w')
         for i in range(len(vec['t'])):

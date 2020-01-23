@@ -13,6 +13,9 @@
         "recordVariables": {
             "synapses:AMPA_noplast:0/g": {
                 "pop1": "*"
+            }, 
+            "synapses:AMPA_noplast:0/u_bar": {
+                "pop1": "*"
             }
         }
     }

@@ -22,6 +22,11 @@
         <Parameter name="s_ampa" dimension="none" description="contribution of AMPAR currents" />
         <Parameter name="s_nmda" dimension="none" description="contribution of NMDAR currents" />
         
+        <Parameter name="theta_u_T" dimension="none" description="voltage threshold applied to u to calculate T"/>
+        <Parameter name="tau_u_T" dimension="time" description="time constant for filtering u to calculate T"/>
+        
+        <Constant name="MVOLT" dimension="voltage" value="1mV"/>
+        
        
         <DerivedParameter name="omega" dimension="none" value="(tauRise)*tauDecay)/(tauDecay - tauRise)) * log(tauDecay/tauRise))"/>
 	    <DerivedParameter name="epsilon" dimension="none" value="1 / (-1*exp(-omega/tauRise) + exp(-omega/tauDecay))"/>
@@ -31,8 +36,12 @@
         <Dynamics>
             <StateVariable name="A" dimension="none"/>
             <StateVariable name="B" dimension="none"/>
+            
+            <StateVariable name="u_bar" dimension="none"/>
 
             <!-- TODO: catch tauRise = 0..! -->
+            
+            <DerivedVariable name="u" dimension="none" value="v / MVOLT"/>
 
             <DerivedVariable name="g_ampa" dimension="conductance" exposure="g_ampa" value="gbase * (B - A)" />
             <DerivedVariable name="g" dimension="conductance" exposure="g" value="g_ampa" />
@@ -40,6 +49,8 @@
 
             <TimeDerivative variable="A" value="-A / tauRise" />
             <TimeDerivative variable="B" value="-B / tauDecay" />
+            
+            <TimeDerivative variable="u_bar" value="(- u_bar + H(u - theta_u_T)*(u - theta_u_T)) / tau_u_T" />
 
             <OnStart>
                 <StateAssignment variable="A" value="0" />
@@ -57,8 +68,15 @@
     
      
     <fourPathwaySyn id="AMPA_noplast" tauRise="0.2ms" tauDecay="2ms" gbase="1uS" erev="0mV"
-                    s_ampa="1" s_nmda="0">
+                    s_ampa="1" s_nmda="0"
+                    tau_u_T = "10ms" theta_u_T = "-60">
         <notes>AMPA synapse, no plasticity...</notes>
+    </fourPathwaySyn>  
+    
+    <fourPathwaySyn id="AMPA_preLTD" tauRise="0.2ms" tauDecay="2ms" gbase="1uS" erev="0mV"
+                    s_ampa="1" s_nmda="0"
+                    tau_u_T = "10ms" theta_u_T = "-60">
+        <notes>AMPA synapse, preLTD...</notes>
     </fourPathwaySyn>    
     
     

@@ -73,7 +73,8 @@ sim = Simulation(id='Sim%s'%net.id,
                  duration='500',
                  dt='0.01',
                  recordTraces={'pop1':'*'},
-                 recordVariables={'synapses:%s:0/g'%syn.id:{'pop1':'*'}},
+                 recordVariables={'synapses:%s:0/g'%syn.id:{'pop1':'*'},
+                                  'synapses:%s:0/u_bar'%syn.id:{'pop1':'*'}},
                  recordSpikes={'pop0':'*'})
                  
 sim.to_json_file()

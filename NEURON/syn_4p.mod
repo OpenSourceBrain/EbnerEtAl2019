@@ -9,7 +9,7 @@ NEURON {
 	: Parameters & variables of the original Exp2Syn
 	RANGE tau_a, tau_b, e, i
     
-    RANGE g, g_ampa, g_nmda, G, Z, E, C, P, X : Added by PGleeson, to make these variables accessible
+    RANGE g, g_ampa, g_nmda, G, Z, E, C, P, X, u_bar, T, flag_D : Added by PGleeson, to make these variables accessible
 
 	NONSPECIFIC_CURRENT i
 	: Parameters & variables of the plasticity rule

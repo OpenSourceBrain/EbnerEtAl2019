@@ -5,7 +5,7 @@ import numpy as np
 import sys
 import matplotlib.pyplot as plt
 
-duration = 100
+duration = 200
 dt = 0.025
 
 def get_random_stim(rate):
@@ -23,9 +23,26 @@ soma = h.Section()
 soma.push() 
 soma.insert("pas")
 syn = h.ExpSyn (0.5, sec = soma)  
-syn = h.Syn4P (0.5, sec = soma)  
 
-def run_sim(rate=100):
+stim = h.IClamp(0.5, sec = soma)
+stim.delay = 100.0
+stim.dur = 5.0
+stim.amp = 200
+
+def get_base_syn():
+    syn = h.Syn4P (0.5, sec = soma)
+    syn.A_LTD_pre = 0
+    syn.A_LTP_pre = 0
+    syn.A_LTD_post = 0
+    syn.A_LTP_post = 0
+    
+    return syn
+
+
+
+syn = get_base_syn()
+
+def run_sim(rate=10):
 
     print('Running simulation of %s with %s Hz input'%(duration, rate))
 
@@ -39,7 +56,9 @@ def run_sim(rate=100):
 
     vec = {}
     states = ['G', 'Z', 'E','C','P','X']
-    for var in ['v','t','g','g_ampa','g_nmda','w_pre','w_post'] + states:
+    #A_vals = ['A_LTD_pre', 'A_LTP_pre', 'A_LTD_post', 'A_LTP_post']
+    
+    for var in ['v','t','g','g_ampa','g_nmda','w_pre','w_post', 'w'] + states:
         vec[var] = h.Vector()
         if var!='v' and var!='t':
             exec("print('Recording:  %s')"%var)
@@ -70,7 +89,7 @@ def run_sim(rate=100):
     hz = 1000/(h.tstop/len(spikes))
     print("Spike times: %s"%['%.3f'%t for t in vec_nc])
     print("Num spikes: %s; avg rate: %s Hz; avg isi: %s ms; std isi: %s ms"%(len(spikes),hz,np.average(isis),np.std(isis)))
-    assert abs((hz-rate)/rate)<0.01
+    #assert abs((hz-rate)/rate)<0.01
 
 
     if not '-nogui' in sys.argv:
@@ -78,17 +97,21 @@ def run_sim(rate=100):
         plt.figure()
         plt.title('Membrane potential')
         plt.plot(vec['t'],vec['v'])
+        
         plt.figure()
         plt.title('Conductance')
         plt.plot(vec['t'],vec['g'],label='g')
         plt.plot(vec['t'],vec['g_ampa'],label='g_ampa')
         plt.plot(vec['t'],vec['g_nmda'],label='g_nmda')
         plt.legend()
+        
         plt.figure()
         plt.title('Weights')
-        plt.plot(vec['t'],vec['w_pre'],label='w_pre')
-        plt.plot(vec['t'],vec['w_post'],label='w_post')
+        plt.plot(vec['t'],vec['w'],label='w')
+        #plt.plot(vec['t'],vec['w_pre'],label='w_pre')
+        #plt.plot(vec['t'],vec['w_post'],label='w_post')
         plt.legend()
+        
         plt.figure()
         plt.title('States')
         for s in states: 

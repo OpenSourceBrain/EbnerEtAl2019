@@ -1,1 +1,9 @@
 /NEURON/x86_64
+/NeuroML2/LEMS_SimSyn4Net.xml
+/NeuroML2/LEMS_SimpleNet.xml
+*.spikes
+/NeuroML2/*.dat
+*.gv*
+/NeuroML2/SimpleNet.net.nml
+/NeuroML2/SimpleNet/RS.cell.nml
+report.*.txt

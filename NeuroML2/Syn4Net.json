@@ -1,0 +1,97 @@
+{
+    "Syn4Net": {
+        "version": "NeuroMLlite v0.1.9", 
+        "parameters": {
+            "weight": 1.01, 
+            "input_amp": 0.23
+        }, 
+        "notes": "Syn4Net: synaptic properties", 
+        "cells": [
+            {
+                "passiveCell": {
+                    "neuroml2_source_file": "passiveCell.cell.nml"
+                }
+            }
+        ], 
+        "synapses": [
+            {
+                "AMPA": {
+                    "neuroml2_source_file": "AMPA_NMDA.synapse.nml"
+                }
+            }
+        ], 
+        "input_sources": [
+            {
+                "i_clamp": {
+                    "pynn_input": "DCSource", 
+                    "parameters": {
+                        "start": 200.0, 
+                        "stop": 800.0, 
+                        "amplitude": "input_amp"
+                    }
+                }
+            }
+        ], 
+        "regions": [
+            {
+                "region1": {
+                    "x": 0.0, 
+                    "y": 0.0, 
+                    "z": 0.0, 
+                    "width": 1000.0, 
+                    "height": 100.0, 
+                    "depth": 1000.0
+                }
+            }
+        ], 
+        "populations": [
+            {
+                "pop0": {
+                    "size": 1, 
+                    "component": "passiveCell", 
+                    "properties": {
+                        "color": "1 0 0"
+                    }, 
+                    "random_layout": {
+                        "region": "region1"
+                    }
+                }
+            }, 
+            {
+                "pop1": {
+                    "size": 1, 
+                    "component": "passiveCell", 
+                    "properties": {
+                        "color": "0 1 0"
+                    }, 
+                    "random_layout": {
+                        "region": "region1"
+                    }
+                }
+            }
+        ], 
+        "projections": [
+            {
+                "proj0": {
+                    "presynaptic": "pop0", 
+                    "postsynaptic": "pop1", 
+                    "synapse": "AMPA", 
+                    "delay": 0, 
+                    "weight": "weight", 
+                    "random_connectivity": {
+                        "probability": 1
+                    }
+                }
+            }
+        ], 
+        "inputs": [
+            {
+                "stim": {
+                    "input_source": "i_clamp", 
+                    "population": "pop0", 
+                    "percentage": 100.0
+                }
+            }
+        ]
+    }
+}

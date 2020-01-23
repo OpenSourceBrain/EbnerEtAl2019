@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<neuroml xmlns="http://www.neuroml.org/schema/neuroml2" 
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+         xsi:schemaLocation="http://www.neuroml.org/schema/neuroml2 https://raw.github.com/NeuroML/NeuroML2/development/Schemas/NeuroML2/NeuroML_v2beta5.xsd" 
+         id="AMPA_NMDA">
+    
+
+    <ComponentType name="clopathPlasticSynapse"
+                   extends="expOneSynapse"
+                   description="...">
+       
+        <Property name="weight" dimension="none" defaultValue="1"/> 
+       
+        <Exposure name="blockFactor" dimension="none"/>
+        <Exposure name="plasticityFactor" dimension="none"/>
+
+         
+        <Children name="plasticityMechanisms" type="basePlasticityMechanism"/>
+        <Children name="blockMechanisms" type="baseBlockMechanism"/>
+        
+        <EventPort name="relay" direction="out" description="Used to relay incoming spikes to child plasticity mechanism"/>
+        
+        <Dynamics>
+            
+            <StateVariable name="g" dimension="conductance" exposure="g"/>
+
+            <TimeDerivative variable="g" value="-g / tauDecay" />
+
+            <OnStart>
+                <StateAssignment variable="g" value="0" />
+            </OnStart>
+
+            <OnEvent port="in">
+                <StateAssignment variable="g" value="g + (weight * blockFactor * plasticityFactor * gbase)" />
+                <EventOut port="relay"/>
+            </OnEvent>
+
+            <DerivedVariable name="plasticityFactor" dimension="none"
+                             select="plasticityMechanisms[*]/plasticityFactor"
+                             reduce="multiply"
+                             exposure="plasticityFactor"/>
+            
+            <DerivedVariable name="blockFactor" dimension="none"
+                             select="blockMechanisms[*]/blockFactor"
+                             reduce="multiply"
+                             exposure="blockFactor"/>
+            
+            <DerivedVariable name="i" exposure="i" dimension="current" value="g * (erev - v)" />
+
+        </Dynamics>
+    </ComponentType>
+    
+    <Dimension name="per_voltage2" m="-2" l="-4" t="6" i="2"/>
+    <Unit symbol="per_mV2" dimension="per_voltage2" power="6"/>
+    
+
+    <ComponentType name="stdpMechanism"
+                   extends="basePlasticityMechanism"
+                   description="...">
+        
+        <Parameter name="Altd" dimension="per_voltage" />
+        <Parameter name="Altp" dimension="per_voltage2" />
+        
+        <Parameter name="tau_dep" dimension="time" />
+        <Parameter name="tau_pot" dimension="time" />
+        <Parameter name="tau_1" dimension="time" />
+        <Parameter name="tau_x" dimension="time" />
+        
+        <Parameter name="min_w" dimension="none" />
+        <Parameter name="max_w" dimension="none" />
+        <Parameter name="start_w" dimension="none" />
+        
+        <Parameter name="theta_dep" dimension="voltage" />
+        <Parameter name="theta_pot" dimension="voltage" />
+        
+        <Exposure name="u_dep" dimension="voltage"/>
+        <Exposure name="u_pot" dimension="voltage"/>
+        <Exposure name="u_1" dimension="voltage"/>
+        <Exposure name="u_dep_diff" dimension="voltage"/>
+        <Exposure name="u_pot_diff" dimension="voltage"/>
+        <Exposure name="v_diff" dimension="voltage"/>
+        <Exposure name="x" dimension="none"/>
+        <Exposure name="ltp_rate" dimension="none"/>
+        
+        
+        <Constant name="MVOLT" dimension="voltage" value="1mV"/>
+        <Constant name="MSEC" dimension="time" value="0.1s"/>   <!-- CHECK!!!!  -->
+        
+        <Requirement name="v" dimension="voltage"/>
+
+        <Dynamics>
+            <StateVariable name="u_dep" dimension="voltage" exposure="u_dep"/>
+            <StateVariable name="u_pot" dimension="voltage" exposure="u_pot"/>
+            <StateVariable name="u_1" dimension="voltage" exposure="u_1"/>
+            <StateVariable name="x" dimension="none" exposure="x"/>
+            
+            <StateVariable name="plasticityFactor" dimension="none" exposure="plasticityFactor"/>
+
+            <TimeDerivative variable="x" value="(-1 * x)/ tau_x"/>
+            
+            <TimeDerivative variable="u_1" value="((-1 * u_1) + v)/ tau_1"/>
+            
+            <TimeDerivative variable="u_dep" value="((-1 * u_dep) + u_1) / tau_dep"/>
+            
+            <TimeDerivative variable="u_pot" value="((-1 * u_pot) + u_1) / tau_pot"/>
+            
+            
+            <TimeDerivative variable="plasticityFactor" value="H(max_w-plasticityFactor)*ltp_rate/ MSEC"/>
+            
+
+            <DerivedVariable name="u_dep_diff" dimension="voltage"
+                             value="(u_dep-theta_dep) * H((u_dep-theta_dep)/MVOLT)"
+                             exposure="u_dep_diff"/>
+            
+            <DerivedVariable name="v_diff" dimension="voltage"
+                             value="(v-theta_pot) * H((v-theta_pot)/MVOLT)"
+                             exposure="v_diff"/>
+            
+            <DerivedVariable name="u_pot_diff" dimension="voltage"
+                             value="(u_pot-theta_dep) * H((u_pot-theta_dep)/MVOLT)"
+                             exposure="u_pot_diff"/>
+            
+            <DerivedVariable name="ltp_rate" dimension="none"
+                             value="Altp * x * v_diff * u_pot_diff"
+                             exposure="ltp_rate"/>
+            
+            <OnStart>
+                <StateAssignment variable="u_dep" value="v" />
+                <StateAssignment variable="u_pot" value="v" />
+                <StateAssignment variable="u_1" value="v" />
+                <StateAssignment variable="x" value="0" />
+                <StateAssignment variable="plasticityFactor" value="start_w" />
+            </OnStart>
+
+            <OnEvent port="in">
+                <StateAssignment variable="plasticityFactor" value="plasticityFactor - H(plasticityFactor-min_w)*(Altd*u_dep_diff)" />
+                <StateAssignment variable="x" value="x+1" />
+            </OnEvent>
+        </Dynamics>
+
+        <Structure>
+            <With instance="parent" as="a"/>
+            <With instance="this" as="b"/>
+            <EventConnection from="a" to="b"/>
+        </Structure>
+
+    </ComponentType>
+     
+     
+     
+    <clopathPlasticSynapse id="AMPA" tauDecay="2ms" gbase="1.5nS" erev="0mV">
+        <notes>AMPA synapse</notes>
+        
+        <stdpMechanism id="stdp" tau_1="5ms" tau_x="20ms" max_w="1" min_w="0.01" start_w="1"
+                      Altd="4e-4 per_mV" tau_dep="15ms" theta_dep="-72mV"
+                      Altp="14e-4 per_mV2" tau_pot="45ms" theta_pot="-15mV"/>
+        
+    </clopathPlasticSynapse>
+     
+    <expOneSynapse id="AMPA_noplast" tauDecay="2ms" gbase="1.5nS" erev="0mV">
+        <notes>AMPA synapse</notes>
+    </expOneSynapse>
+    
+    
+    <clopathPlasticSynapse id="NMDA" gbase="1.5nS"  
+                            erev="0mV" tauDecay="50ms">
+        <notes>NMDA synapse</notes>
+        <blockMechanism type="voltageConcDepBlockMechanism" species="mg" blockConcentration="1 mM"
+                                      scalingConc="3.57 mM" scalingVolt="16.129032258 mV"/>
+    </clopathPlasticSynapse>
+    
+    
+    <doubleSynapse id="AMPA_NMDA" synapse1="AMPA" synapse1Path="./AMPA" synapse2="NMDA" synapse2Path="./NMDA">
+        <notes>A single "synapse" which contains both AMPA and NMDA. Hopefully the need for extra synapse1Path/synapse2Path attributes can be removed in later versions.</notes>
+    </doubleSynapse>
+
+</neuroml>
+

@@ -4,11 +4,9 @@
          xsi:schemaLocation="http://www.neuroml.org/schema/neuroml2 https://raw.github.com/NeuroML/NeuroML2/development/Schemas/NeuroML2/NeuroML_v2beta5.xsd" 
          id="AMPA_NMDA">
     
-    
     <!--
         WORK IN PROGRESS!! 
     -->
-    
     
     <ComponentType name="fourPathwaySyn"
                    extends="baseConductanceBasedSynapse"
@@ -22,15 +20,33 @@
         <Parameter name="s_ampa" dimension="none" description="contribution of AMPAR currents" />
         <Parameter name="s_nmda" dimension="none" description="contribution of NMDAR currents" />
         
+        <Parameter name="A_LTP_pre" dimension="none" description="amplitude of pre-LTP" />
+        
         <Parameter name="theta_u_T" dimension="none" description="voltage threshold applied to u to calculate T"/>
         <Parameter name="tau_u_T" dimension="time" description="time constant for filtering u to calculate T"/>
         <Parameter name="m_T" dimension="none" description="slope of the saturation function for T"/>
         
+        <Parameter name="theta_u_N" dimension="none" description="voltage threshold applied to u to calculate N"/>
+        <Parameter name="tau_N_alpha" dimension="time" description="time constant for calculating N-alpha"/>
+        <Parameter name="tau_N_beta" dimension="time" description="time constant for calculating N-beta"/>
+        <Parameter name="m_N_alpha" dimension="none" description="slope of the saturation function for N_alpha"/>
+        <Parameter name="m_N_beta" dimension="none" description="slope of the saturation function for N_beta"/>
+        
+        <Parameter name="tau_Z_a" dimension="time" description="time constant of presynaptic event Z (rise)"/>
+        <Parameter name="tau_Z_b" dimension="time" description="time constant of presynaptic event Z (decay)"/>
+        <Parameter name="m_Z" dimension="none" description="slope of the saturation function for Z"/>
+        <Parameter name="theta_N_X" dimension="none" description="threshold for N to calculate X"/>
+        
+        
         <Constant name="MVOLT" dimension="voltage" value="1mV"/>
+        <Constant name="MSEC" dimension="time" value="1ms"/>
         
        
         <DerivedParameter name="omega" dimension="none" value="(tauRise)*tauDecay)/(tauDecay - tauRise)) * log(tauDecay/tauRise))"/>
 	    <DerivedParameter name="epsilon" dimension="none" value="1 / (-1*exp(-omega/tauRise) + exp(-omega/tauDecay))"/>
+        
+        <DerivedParameter name="omega_Z" dimension="none" value="(tau_Z_a*tau_Z_b)/(tau_Z_b - tau_Z_a) * log(tau_Z_b/tau_Z_a)"/>
+	    <DerivedParameter name="epsilon_Z" dimension="none" value="1 / (-exp(-omega_Z/tau_Z_a) + exp(-omega_Z/tau_Z_b))"/>
         
         <Exposure name="g_ampa" dimension="conductance"/>
         <Exposure name="T" dimension="none"/>
@@ -39,30 +55,69 @@
             <StateVariable name="A" dimension="none"/>
             <StateVariable name="B" dimension="none"/>
             
+            <StateVariable name="w_pre" dimension="none"/>
+            <StateVariable name="w_post" dimension="none"/>
+            
             <StateVariable name="u_bar" dimension="none"/>
+            <StateVariable name="N_alpha_bar" dimension="none"/>
+            <StateVariable name="N_beta_bar" dimension="none"/>
+            
+            <StateVariable name="Z_a" dimension="none"/>
+            <StateVariable name="Z_b" dimension="none"/>
 
             <!-- TODO: catch tauRise = 0..! -->
             
             <DerivedVariable name="u" dimension="none" value="v / MVOLT"/>
             <DerivedVariable name="T" dimension="none" value="tanh(log(m_T)/2 * u_bar)"/>
+            <DerivedVariable name="N_alpha" dimension="none" value="tanh(log(m_N_alpha)/2 * N_alpha_bar)"/>
+            <DerivedVariable name="N_beta" dimension="none" value="tanh(log(m_N_beta)/2 * N_beta_bar)"/>
+            
+            
+            <DerivedVariable name="Z" dimension="none" value="tanh(log(m_Z)/2 * (Z_b - Z_a))"/>
+            <DerivedVariable name="N" dimension="none" value="H(N_alpha * N_beta - theta_N_X) * (N_alpha * N_beta - theta_N_X)"/>
+            <DerivedVariable name="X" dimension="none" value="Z * N"/>
+            
+            <DerivedVariable name="w" dimension="none" value="w_pre * w_post"/>
+            
+            <ConditionalDerivedVariable name="w_pre_rate" dimension="none">
+                <Case condition="w_pre .lt. 1" value="A_LTP_pre * X"/>
+                <Case value="0"/>
+            </ConditionalDerivedVariable>
+            
+            
 
-            <DerivedVariable name="g_ampa" dimension="conductance" exposure="g_ampa" value="gbase * (B - A)" />
-            <DerivedVariable name="g" dimension="conductance" exposure="g" value="g_ampa" />
+            <DerivedVariable name="g_ampa" dimension="conductance" exposure="g_ampa" value="gbase * s_ampa * w_post * (B - A)" />
+            <DerivedVariable name="g" dimension="conductance" exposure="g" value="w_pre * g_ampa" />
             <DerivedVariable name="i" exposure="i" dimension="current" value="g * (erev - v)" />
 
             <TimeDerivative variable="A" value="-A / tauRise" />
             <TimeDerivative variable="B" value="-B / tauDecay" />
             
             <TimeDerivative variable="u_bar" value="(- u_bar + H(u - theta_u_T)*(u - theta_u_T)) / tau_u_T" />
+            <TimeDerivative variable="N_alpha_bar" value="(- N_alpha_bar + H(u - theta_u_N)*(u - theta_u_N)) / tau_N_alpha" />
+            <TimeDerivative variable="N_beta_bar" value="(- N_beta_bar + N_alpha_bar) / tau_N_beta" />
+            
+            <TimeDerivative variable="Z_a" value="-Z_a / tau_Z_a" />
+            <TimeDerivative variable="Z_b" value="-Z_b / tau_Z_b" />
+            
+            <TimeDerivative variable="w_pre" value="w_pre_rate/MSEC" />
+            
 
             <OnStart>
                 <StateAssignment variable="A" value="0" />
                 <StateAssignment variable="B" value="0" />
+                <StateAssignment variable="w_pre" value="0.5" />
+                <StateAssignment variable="w_post" value="2" />
             </OnStart>
 
             <OnEvent port="in">
                 <StateAssignment variable="A" value="A + (weight * epsilon)" />
                 <StateAssignment variable="B" value="B + (weight * epsilon)" />
+                
+                <StateAssignment variable="Z_a" value="Z_a + epsilon_Z" />
+                <StateAssignment variable="Z_b" value="Z_b + epsilon_Z" />
+                
+                
             </OnEvent>
 
         </Dynamics>
@@ -72,14 +127,22 @@
      
     <fourPathwaySyn id="AMPA_noplast" tauRise="0.2ms" tauDecay="2ms" gbase="1uS" erev="0mV"
                     s_ampa="1" s_nmda="0"
-                    tau_u_T = "10ms" theta_u_T = "-60" m_T ="1.7">
+                    A_LTP_pre = "0"
+                    tau_u_T = "10ms" theta_u_T = "-60" m_T ="1.7"
+                    theta_u_N = "-30" tau_N_alpha = "7.5ms" tau_N_beta = "30ms" m_N_alpha = "2" m_N_beta = "10"
+                    tau_Z_a = "1ms" tau_Z_b = "15 ms" m_Z = "6" theta_N_X = "0.2" >
         <notes>AMPA synapse, no plasticity...</notes>
     </fourPathwaySyn>  
     
-    <fourPathwaySyn id="AMPA_preLTD" tauRise="0.2ms" tauDecay="2ms" gbase="1uS" erev="0mV"
+    
+    
+    <fourPathwaySyn id="AMPA_preLTP" tauRise="0.2ms" tauDecay="2ms" gbase="1uS" erev="0mV"
                     s_ampa="1" s_nmda="0"
-                    tau_u_T = "10ms" theta_u_T = "-60" m_T ="1.7">
-        <notes>AMPA synapse, preLTD...</notes>
+                    A_LTP_pre = "0.1"
+                    tau_u_T = "10ms" theta_u_T = "-60" m_T ="1.7"
+                    theta_u_N = "-30" tau_N_alpha = "7.5ms" tau_N_beta = "30ms" m_N_alpha = "2" m_N_beta = "10"
+                    tau_Z_a = "1ms" tau_Z_b = "15 ms" m_Z = "6" theta_N_X = "0.2" >
+        <notes>AMPA synapse, preLTP enabled</notes>
     </fourPathwaySyn>    
     
     

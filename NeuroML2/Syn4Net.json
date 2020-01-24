@@ -2,7 +2,7 @@
     "Syn4Net": {
         "version": "NeuroMLlite v0.1.9", 
         "parameters": {
-            "stim2_delay": 200, 
+            "stim2_delay": 110, 
             "weight": 0.001, 
             "stim1_delay": 50
         }, 

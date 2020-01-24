@@ -8,8 +8,8 @@
 
     <spikeArray id="spkArr1">
       <spike id="0" time="100 ms"/>
-      <spike id="1" time="120 ms"/>
-      <spike id="2" time="140 ms"/>
+      <spike id="1" time="130 ms"/>
+      <spike id="2" time="160 ms"/>
     </spikeArray>
  
 

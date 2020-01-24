@@ -11,13 +11,43 @@
             "pop0": "*"
         }, 
         "recordVariables": {
-            "synapses:AMPA_noplast:0/T": {
+            "synapses:AMPA_noplast:0/N_alpha": {
                 "pop1": "*"
             }, 
             "synapses:AMPA_noplast:0/g": {
                 "pop1": "*"
             }, 
+            "synapses:AMPA_noplast:0/N_beta": {
+                "pop1": "*"
+            }, 
+            "synapses:AMPA_noplast:0/w_post": {
+                "pop1": "*"
+            }, 
+            "synapses:AMPA_noplast:0/N": {
+                "pop1": "*"
+            }, 
             "synapses:AMPA_noplast:0/u_bar": {
+                "pop1": "*"
+            }, 
+            "synapses:AMPA_noplast:0/T": {
+                "pop1": "*"
+            }, 
+            "synapses:AMPA_noplast:0/w": {
+                "pop1": "*"
+            }, 
+            "synapses:AMPA_noplast:0/N_alpha_bar": {
+                "pop1": "*"
+            }, 
+            "synapses:AMPA_noplast:0/N_beta_bar": {
+                "pop1": "*"
+            }, 
+            "synapses:AMPA_noplast:0/w_pre": {
+                "pop1": "*"
+            }, 
+            "synapses:AMPA_noplast:0/X": {
+                "pop1": "*"
+            }, 
+            "synapses:AMPA_noplast:0/Z": {
                 "pop1": "*"
             }
         }

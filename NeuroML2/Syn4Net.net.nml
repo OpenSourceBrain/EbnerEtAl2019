@@ -4,16 +4,16 @@
     Generation seed: 1234
     NeuroMLlite parameters: 
         stim1_delay = 50
-        stim2_delay = 200
+        stim2_delay = 110
         weight = 0.001</notes>
     <include href="passiveCell.cell.nml"/>
     <include href="fourPathwaySyn.synapse.nml"/>
     <pulseGenerator id="stim1" delay="50.0ms" duration="5.0ms" amplitude="0.4nA"/>
-    <pulseGenerator id="stim2" delay="200.0ms" duration="5.0ms" amplitude="0.4nA"/>
+    <pulseGenerator id="stim2" delay="110.0ms" duration="5.0ms" amplitude="0.4nA"/>
     <spikeArray id="spkArr1">
         <spike id="0" time="100 ms"/>
-        <spike id="1" time="120 ms"/>
-        <spike id="2" time="140 ms"/>
+        <spike id="1" time="130 ms"/>
+        <spike id="2" time="160 ms"/>
     </spikeArray>
     <network id="Syn4Net">
         <notes>Syn4Net: synaptic properties</notes>

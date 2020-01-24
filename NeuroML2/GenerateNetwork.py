@@ -9,7 +9,7 @@ net = Network(id='Syn4Net')
 net.notes = 'Syn4Net: synaptic properties'
 net.parameters = { 'weight': 0.001,
                    'stim1_delay':      50,
-                   'stim2_delay':      200}
+                   'stim2_delay':      110}
 
 
 cell = Cell(id='passiveCell', neuroml2_source_file='passiveCell.cell.nml')
@@ -38,7 +38,7 @@ p1 = Population(id='pop1', size=1, component=cell.id, properties={'color':'0 1 0
 net.populations.append(p0)
 net.populations.append(p1)
 
-syn = Synapse(id='AMPA_noplast', neuroml2_source_file='fourPathwaySyn.synapse.nml')
+syn = Synapse(id='AMPA_preLTD', neuroml2_source_file='fourPathwaySyn.synapse.nml')
 net.synapses.append(syn)
                       
 
@@ -50,12 +50,6 @@ net.projections.append(Projection(id='proj0',
                                   weight='weight'))
 net.projections[0].random_connectivity=RandomConnectivity(probability=1)
 
-
-'''
-net.inputs.append(Input(id='stim',
-                        input_source=input_source.id,
-                        population=p0.id,
-                        percentage=100))'''
 
 net.inputs.append(Input(id='i_stim1',
                         input_source=stim1.id,
@@ -73,14 +67,17 @@ new_file = net.to_json_file('%s.json'%net.id)
 ################################################################################
 ###   Build Simulation object & save as JSON
 
+recordVariables={}
+syn_vars = ['g', 'u_bar', 'T', 'N_alpha_bar', 'N_beta_bar', 'N_alpha', 'N_beta', 'N', 'Z', 'X', 'w_pre', 'w_post','w']
+for s in syn_vars:
+    recordVariables['synapses:%s:0/%s'%(syn.id,s)] = {'pop1':'*'}
+
 sim = Simulation(id='Sim%s'%net.id,
                  network=new_file,
                  duration='500',
                  dt='0.01',
                  recordTraces={'pop1':'*'},
-                 recordVariables={'synapses:%s:0/g'%syn.id:{'pop1':'*'},
-                                  'synapses:%s:0/u_bar'%syn.id:{'pop1':'*'},
-                                  'synapses:%s:0/T'%syn.id:{'pop1':'*'}},
+                 recordVariables=recordVariables,
                  recordSpikes={'pop0':'*'})
                  
 sim.to_json_file()

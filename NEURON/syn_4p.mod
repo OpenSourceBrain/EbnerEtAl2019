@@ -9,7 +9,8 @@ NEURON {
 	: Parameters & variables of the original Exp2Syn
 	RANGE tau_a, tau_b, e, i
     
-    RANGE g, g_ampa, g_nmda, G, Z, E, C, P, X, u_bar, T, flag_D : Added by PGleeson, to make these variables accessible
+    RANGE g, g_ampa, g_nmda, G, Z, E, C, P, X, u_bar, T, flag_D : Added by PGleeson, to make these variables accessible (for testing)
+    RANGE N_alpha_bar, N_alpha, N_beta_bar, N_beta, N           : Added by PGleeson, to make these variables accessible (for testing)
 
 	NONSPECIFIC_CURRENT i
 	: Parameters & variables of the plasticity rule
@@ -94,6 +95,8 @@ ASSIGNED {
 	K_beta
 	K
 	N
+	N_alpha  : Added by PGleeson, to make these variables accessible (for testing)
+	N_beta   : Added by PGleeson, to make these variables accessible (for testing)
 	X
 	Z
 	flag_D
@@ -180,7 +183,7 @@ BREAKPOINT {
 }
 
 DERIVATIVE state {
-	LOCAL D, u, Eta, LTD_pre, LTP_pre, LTD_post, LTP_post, g_update, N_alpha, N_beta, N
+	LOCAL D, u, Eta, LTD_pre, LTP_pre, LTD_post, LTP_post, g_update
 	
 	if(flag_D == 1) {	: Check if there is a presynaptic event
 		D = 1

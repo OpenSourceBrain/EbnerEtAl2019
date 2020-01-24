@@ -9,7 +9,7 @@ net = Network(id='Syn4Net')
 net.notes = 'Syn4Net: synaptic properties'
 net.parameters = { 'weight': 0.001,
                    'stim1_delay':      50,
-                   'stim2_delay':      110}
+                   'stim2_delay':      140}
 
 
 cell = Cell(id='passiveCell', neuroml2_source_file='passiveCell.cell.nml')
@@ -38,7 +38,8 @@ p1 = Population(id='pop1', size=1, component=cell.id, properties={'color':'0 1 0
 net.populations.append(p0)
 net.populations.append(p1)
 
-syn = Synapse(id='AMPA_preLTD', neuroml2_source_file='fourPathwaySyn.synapse.nml')
+syn = Synapse(id='AMPA_preLTP', neuroml2_source_file='fourPathwaySyn.synapse.nml')
+syn = Synapse(id='AMPA_postLTD', neuroml2_source_file='fourPathwaySyn.synapse.nml')
 net.synapses.append(syn)
                       
 
@@ -68,7 +69,7 @@ new_file = net.to_json_file('%s.json'%net.id)
 ###   Build Simulation object & save as JSON
 
 recordVariables={}
-syn_vars = ['g', 'u_bar', 'T', 'N_alpha_bar', 'N_beta_bar', 'N_alpha', 'N_beta', 'N', 'Z', 'X', 'w_pre', 'w_post','w']
+syn_vars = ['g', 'u_bar', 'T', 'N_alpha_bar', 'N_beta_bar', 'N_alpha', 'N_beta', 'N', 'Z', 'X', 'w_pre', 'w_post','w', 'G','C','P']
 for s in syn_vars:
     recordVariables['synapses:%s:0/%s'%(syn.id,s)] = {'pop1':'*'}
 

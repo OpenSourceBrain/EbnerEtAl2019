@@ -20,7 +20,10 @@
         <Parameter name="s_ampa" dimension="none" description="contribution of AMPAR currents" />
         <Parameter name="s_nmda" dimension="none" description="contribution of NMDAR currents" />
         
+        <Parameter name="A_LTD_pre" dimension="none" description="amplitude of pre-LTD" />
         <Parameter name="A_LTP_pre" dimension="none" description="amplitude of pre-LTP" />
+        <Parameter name="A_LTD_post" dimension="none" description="amplitude of post-LTD" />
+        <Parameter name="A_LTP_post" dimension="none" description="amplitude of post-LTP" />
         
         <Parameter name="theta_u_T" dimension="none" description="voltage threshold applied to u to calculate T"/>
         <Parameter name="tau_u_T" dimension="time" description="time constant for filtering u to calculate T"/>
@@ -37,7 +40,13 @@
         <Parameter name="m_Z" dimension="none" description="slope of the saturation function for Z"/>
         <Parameter name="theta_N_X" dimension="none" description="threshold for N to calculate X"/>
         
-        
+        <Parameter name="tau_G_a" dimension="time" description="time constant of presynaptic event G (rise), also used for NMDAR currents"/>
+        <Parameter name="tau_G_b" dimension="time" description="time constant of presynaptic event G (decay)"/>
+        <Parameter name="m_G" dimension="none" description="slope of the saturation function for G"/>
+        <Parameter name="theta_u_C" dimension="none" description="voltage threshold applied to u to calculate C"/>
+        <Parameter name="theta_C_minus" dimension="none" description="threshold applied to C for post-LTD (P activation)"/>
+        <Parameter name="theta_C_plus" dimension="none" description="threshold applied to C for post-LTP (K-alpha activation)"/>
+                
         <Constant name="MVOLT" dimension="voltage" value="1mV"/>
         <Constant name="MSEC" dimension="time" value="1ms"/>
         
@@ -47,6 +56,8 @@
         
         <DerivedParameter name="omega_Z" dimension="none" value="(tau_Z_a*tau_Z_b)/(tau_Z_b - tau_Z_a) * log(tau_Z_b/tau_Z_a)"/>
 	    <DerivedParameter name="epsilon_Z" dimension="none" value="1 / (-exp(-omega_Z/tau_Z_a) + exp(-omega_Z/tau_Z_b))"/>
+        <DerivedParameter name="omega_G" dimension="none" value="(tau_G_a*tau_G_b)/(tau_G_b - tau_G_a) * log(tau_G_b/tau_G_a)"/>
+	    <DerivedParameter name="epsilon_G" dimension="none" value="1 / (-exp(-omega_G/tau_G_a) + exp(-omega_G/tau_G_b))"/>
         
         <Exposure name="g_ampa" dimension="conductance"/>
         <Exposure name="T" dimension="none"/>
@@ -64,6 +75,8 @@
             
             <StateVariable name="Z_a" dimension="none"/>
             <StateVariable name="Z_b" dimension="none"/>
+            <StateVariable name="G_a" dimension="none"/>
+            <StateVariable name="G_b" dimension="none"/>
 
             <!-- TODO: catch tauRise = 0..! -->
             
@@ -74,6 +87,7 @@
             
             
             <DerivedVariable name="Z" dimension="none" value="tanh(log(m_Z)/2 * (Z_b - Z_a))"/>
+            <DerivedVariable name="G" dimension="none" value="tanh(log(m_G)/2 * (G_b - G_a))"/>
             <DerivedVariable name="N" dimension="none" value="H(N_alpha * N_beta - theta_N_X) * (N_alpha * N_beta - theta_N_X)"/>
             <DerivedVariable name="X" dimension="none" value="Z * N"/>
             
@@ -84,6 +98,13 @@
                 <Case value="0"/>
             </ConditionalDerivedVariable>
             
+            <ConditionalDerivedVariable name="w_post_rate" dimension="none">
+                <Case condition="w_post .gt. 0" value="-1 * A_LTD_post * P"/>
+                <Case value="0"/>
+            </ConditionalDerivedVariable>
+            
+            <DerivedVariable name="C" dimension="none" value="G * H(u - theta_u_C)*(u - theta_u_C)"/>
+            <DerivedVariable name="P" dimension="none" value="H(C - theta_C_minus)*(C - theta_C_minus) * H(theta_C_plus - C)*(theta_C_plus - C) / ((theta_C_plus - theta_C_minus) / 2)^2"/>
             
 
             <DerivedVariable name="g_ampa" dimension="conductance" exposure="g_ampa" value="gbase * s_ampa * w_post * (B - A)" />
@@ -100,7 +121,11 @@
             <TimeDerivative variable="Z_a" value="-Z_a / tau_Z_a" />
             <TimeDerivative variable="Z_b" value="-Z_b / tau_Z_b" />
             
+            <TimeDerivative variable="G_a" value="-G_a / tau_G_a" />
+            <TimeDerivative variable="G_b" value="-G_b / tau_G_b" />
+            
             <TimeDerivative variable="w_pre" value="w_pre_rate/MSEC" />
+            <TimeDerivative variable="w_post" value="w_post_rate/MSEC" />
             
 
             <OnStart>
@@ -117,6 +142,9 @@
                 <StateAssignment variable="Z_a" value="Z_a + epsilon_Z" />
                 <StateAssignment variable="Z_b" value="Z_b + epsilon_Z" />
                 
+                <StateAssignment variable="G_a" value="G_a + epsilon_G" />
+                <StateAssignment variable="G_b" value="G_b + epsilon_G" />
+                
                 
             </OnEvent>
 
@@ -127,10 +155,11 @@
      
     <fourPathwaySyn id="AMPA_noplast" tauRise="0.2ms" tauDecay="2ms" gbase="1uS" erev="0mV"
                     s_ampa="1" s_nmda="0"
-                    A_LTP_pre = "0"
+                    A_LTD_pre = "0" A_LTP_pre = "0" A_LTD_post = "0" A_LTP_post = "0"
                     tau_u_T = "10ms" theta_u_T = "-60" m_T ="1.7"
                     theta_u_N = "-30" tau_N_alpha = "7.5ms" tau_N_beta = "30ms" m_N_alpha = "2" m_N_beta = "10"
-                    tau_Z_a = "1ms" tau_Z_b = "15 ms" m_Z = "6" theta_N_X = "0.2" >
+                    tau_Z_a = "1ms" tau_Z_b = "15 ms" m_Z = "6" theta_N_X = "0.2" 
+                    tau_G_a = "2ms" tau_G_b = "50ms" m_G = "10" theta_u_C = "-68" theta_C_minus = "15" theta_C_plus = "35" >
         <notes>AMPA synapse, no plasticity...</notes>
     </fourPathwaySyn>  
     
@@ -138,10 +167,21 @@
     
     <fourPathwaySyn id="AMPA_preLTP" tauRise="0.2ms" tauDecay="2ms" gbase="1uS" erev="0mV"
                     s_ampa="1" s_nmda="0"
-                    A_LTP_pre = "0.1"
+                    A_LTD_pre = "0" A_LTP_pre = "0.1" A_LTD_post = "0" A_LTP_post = "0"
                     tau_u_T = "10ms" theta_u_T = "-60" m_T ="1.7"
                     theta_u_N = "-30" tau_N_alpha = "7.5ms" tau_N_beta = "30ms" m_N_alpha = "2" m_N_beta = "10"
-                    tau_Z_a = "1ms" tau_Z_b = "15 ms" m_Z = "6" theta_N_X = "0.2" >
+                    tau_Z_a = "1ms" tau_Z_b = "15 ms" m_Z = "6" theta_N_X = "0.2" 
+                    tau_G_a = "2ms" tau_G_b = "50ms" m_G = "10" theta_u_C = "-68" theta_C_minus = "15" theta_C_plus = "35" >
+        <notes>AMPA synapse, preLTP enabled</notes>
+    </fourPathwaySyn>    
+    
+    <fourPathwaySyn id="AMPA_postLTD" tauRise="0.2ms" tauDecay="2ms" gbase="1uS" erev="0mV"
+                    s_ampa="1" s_nmda="0"
+                    A_LTD_pre = "0" A_LTP_pre = "0" A_LTD_post = "0.1" A_LTP_post = "0"
+                    tau_u_T = "10ms" theta_u_T = "-60" m_T ="1.7"
+                    theta_u_N = "-30" tau_N_alpha = "7.5ms" tau_N_beta = "30ms" m_N_alpha = "2" m_N_beta = "10"
+                    tau_Z_a = "1ms" tau_Z_b = "15 ms" m_Z = "6" theta_N_X = "0.2"
+                    tau_G_a = "2ms" tau_G_b = "50ms" m_G = "10" theta_u_C = "-68" theta_C_minus = "15" theta_C_plus = "35" >
         <notes>AMPA synapse, preLTP enabled</notes>
     </fourPathwaySyn>    
     

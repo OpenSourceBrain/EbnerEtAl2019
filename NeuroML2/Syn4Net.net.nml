@@ -4,12 +4,12 @@
     Generation seed: 1234
     NeuroMLlite parameters: 
         stim1_delay = 50
-        stim2_delay = 110
+        stim2_delay = 140
         weight = 0.001</notes>
     <include href="passiveCell.cell.nml"/>
     <include href="fourPathwaySyn.synapse.nml"/>
     <pulseGenerator id="stim1" delay="50.0ms" duration="5.0ms" amplitude="0.4nA"/>
-    <pulseGenerator id="stim2" delay="110.0ms" duration="5.0ms" amplitude="0.4nA"/>
+    <pulseGenerator id="stim2" delay="140.0ms" duration="5.0ms" amplitude="0.4nA"/>
     <spikeArray id="spkArr1">
         <spike id="0" time="100 ms"/>
         <spike id="1" time="130 ms"/>
@@ -34,7 +34,7 @@
                 <location x="910.975962449124154" y="93.926899736376399" z="582.227573058949133"/>
             </instance>
         </population>
-        <projection id="proj0" presynapticPopulation="pop0" postsynapticPopulation="pop1" synapse="AMPA_noplast">
+        <projection id="proj0" presynapticPopulation="pop0" postsynapticPopulation="pop1" synapse="AMPA_postLTD">
             <connectionWD id="0" preCellId="../pop0/0/spkArr1" postCellId="../pop1/0/passiveCell" weight="0.001" delay="0ms"/>
         </projection>
         <inputList id="i_stim1" population="pop1" component="stim1">

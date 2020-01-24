@@ -2,7 +2,7 @@
     "Syn4Net": {
         "version": "NeuroMLlite v0.1.9", 
         "parameters": {
-            "stim2_delay": 110, 
+            "stim2_delay": 140, 
             "weight": 0.001, 
             "stim1_delay": 50
         }, 
@@ -21,7 +21,7 @@
         ], 
         "synapses": [
             {
-                "AMPA_noplast": {
+                "AMPA_postLTD": {
                     "neuroml2_source_file": "fourPathwaySyn.synapse.nml"
                 }
             }
@@ -92,7 +92,7 @@
                 "proj0": {
                     "presynaptic": "pop0", 
                     "postsynaptic": "pop1", 
-                    "synapse": "AMPA_noplast", 
+                    "synapse": "AMPA_postLTD", 
                     "delay": 0, 
                     "weight": "weight", 
                     "random_connectivity": {

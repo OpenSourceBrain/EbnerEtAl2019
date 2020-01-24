@@ -40,7 +40,7 @@ stim1.dur = 5.0
 stim1.amp = 0.4
 
 stim2 = h.IClamp(0.5, sec = soma)
-stim2.delay = 110.0
+stim2.delay = 140.0
 stim2.dur = 5.0
 stim2.amp = 0.4
 
@@ -74,6 +74,13 @@ def get_preLTP_syn():
     syn.A_LTP_pre = 0.1
     return syn
 
+def get_postLTD_syn():
+    syn = get_base_syn()
+    syn.s_ampa = 1
+    syn.s_nmda = 0
+    syn.A_LTD_post = 0.1
+    return syn
+
 def get_nmda_syn():
     syn = get_base_syn()
     syn.s_ampa = 0
@@ -84,6 +91,7 @@ def get_nmda_syn():
 syn = get_base_syn()
 syn = get_ampa_syn()
 syn = get_preLTP_syn()
+syn = get_postLTD_syn()
 
 def run_sim(rate=10):
 
@@ -107,8 +115,9 @@ def run_sim(rate=10):
     A_vals = ['A_LTD_pre', 'A_LTP_pre', 'A_LTD_post', 'A_LTP_post']
     A_vals = ['A_LTD_pre']
     N_vals = ['N_alpha_bar','N_alpha','N_beta_bar','N_beta','N','Z','X']
+    postLTP_vals = ['G', 'P','C']
     
-    for var in ['v','t','g','g_ampa','g_nmda','w_pre','w_post', 'w'] + states + A_vals + N_vals:
+    for var in ['v','t','g','g_ampa','g_nmda','w_pre','w_post', 'w'] + states + A_vals + N_vals + postLTP_vals:
         vec[var] = h.Vector()
         if var!='v' and var!='t':
             exec("print('Recording:  %s')"%var)
@@ -142,6 +151,8 @@ def run_sim(rate=10):
     #assert abs((hz-rate)/rate)<0.01
 
     scales = {'v':0.001, 'g':1e-6, 'u_bar':1, 'T':1, 'N_alpha_bar':1, 'N_beta_bar':1, 'N_alpha':1, 'N_beta':1, 'N':1, 'Z':1, 'X':1, 'w_pre':1,'w_post':1,'w':1}
+    for v in postLTP_vals:
+        scales[v] = 1
     for var in scales:
         var_file = open('%s.dat'%var, 'w')
         for i in range(len(vec['t'])):
@@ -184,6 +195,12 @@ def run_sim(rate=10):
         plt.figure()
         plt.title('N vals')
         for s in N_vals: 
+            plt.plot(vec['t'],vec[s],label=s)
+        plt.legend()
+        
+        plt.figure()
+        plt.title('postLTP vals')
+        for s in postLTP_vals: 
             plt.plot(vec['t'],vec[s],label=s)
         plt.legend()
         

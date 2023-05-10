@@ -1,62 +1,62 @@
 {
     "SimSyn4Net": {
-        "version": "NeuroMLlite v0.1.9", 
-        "network": "Syn4Net.json", 
-        "duration": 500.0, 
-        "dt": 0.01, 
-        "recordTraces": {
+        "version": "NeuroMLlite v0.5.3",
+        "network": "Syn4Net.json",
+        "duration": 500.0,
+        "dt": 0.01,
+        "record_traces": {
             "pop1": "*"
-        }, 
-        "recordSpikes": {
+        },
+        "record_spikes": {
             "pop0": "*"
-        }, 
-        "recordVariables": {
-            "synapses:AMPA_postLTD:0/u_bar": {
-                "pop1": "*"
-            }, 
-            "synapses:AMPA_postLTD:0/N_beta_bar": {
-                "pop1": "*"
-            }, 
-            "synapses:AMPA_postLTD:0/w": {
-                "pop1": "*"
-            }, 
-            "synapses:AMPA_postLTD:0/N": {
-                "pop1": "*"
-            }, 
-            "synapses:AMPA_postLTD:0/C": {
-                "pop1": "*"
-            }, 
-            "synapses:AMPA_postLTD:0/N_alpha_bar": {
-                "pop1": "*"
-            }, 
-            "synapses:AMPA_postLTD:0/T": {
-                "pop1": "*"
-            }, 
-            "synapses:AMPA_postLTD:0/N_alpha": {
-                "pop1": "*"
-            }, 
-            "synapses:AMPA_postLTD:0/P": {
-                "pop1": "*"
-            }, 
+        },
+        "record_variables": {
             "synapses:AMPA_postLTD:0/g": {
                 "pop1": "*"
-            }, 
-            "synapses:AMPA_postLTD:0/G": {
+            },
+            "synapses:AMPA_postLTD:0/u_bar": {
                 "pop1": "*"
-            }, 
+            },
+            "synapses:AMPA_postLTD:0/T": {
+                "pop1": "*"
+            },
+            "synapses:AMPA_postLTD:0/N_alpha_bar": {
+                "pop1": "*"
+            },
+            "synapses:AMPA_postLTD:0/N_beta_bar": {
+                "pop1": "*"
+            },
+            "synapses:AMPA_postLTD:0/N_alpha": {
+                "pop1": "*"
+            },
+            "synapses:AMPA_postLTD:0/N_beta": {
+                "pop1": "*"
+            },
+            "synapses:AMPA_postLTD:0/N": {
+                "pop1": "*"
+            },
             "synapses:AMPA_postLTD:0/Z": {
                 "pop1": "*"
-            }, 
-            "synapses:AMPA_postLTD:0/w_post": {
-                "pop1": "*"
-            }, 
-            "synapses:AMPA_postLTD:0/w_pre": {
-                "pop1": "*"
-            }, 
+            },
             "synapses:AMPA_postLTD:0/X": {
                 "pop1": "*"
-            }, 
-            "synapses:AMPA_postLTD:0/N_beta": {
+            },
+            "synapses:AMPA_postLTD:0/w_pre": {
+                "pop1": "*"
+            },
+            "synapses:AMPA_postLTD:0/w_post": {
+                "pop1": "*"
+            },
+            "synapses:AMPA_postLTD:0/w": {
+                "pop1": "*"
+            },
+            "synapses:AMPA_postLTD:0/G": {
+                "pop1": "*"
+            },
+            "synapses:AMPA_postLTD:0/C": {
+                "pop1": "*"
+            },
+            "synapses:AMPA_postLTD:0/P": {
                 "pop1": "*"
             }
         }

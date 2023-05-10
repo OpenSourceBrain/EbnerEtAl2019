@@ -1,121 +1,99 @@
 {
     "Syn4Net": {
-        "version": "NeuroMLlite v0.1.9", 
+        "version": "NeuroMLlite v0.5.3",
+        "notes": "Syn4Net: synaptic properties",
         "parameters": {
-            "stim2_delay": 140, 
-            "weight": 0.001, 
-            "stim1_delay": 50
-        }, 
-        "notes": "Syn4Net: synaptic properties", 
-        "cells": [
-            {
-                "passiveCell": {
-                    "neuroml2_source_file": "passiveCell.cell.nml"
+            "weight": 0.001,
+            "stim1_delay": 50,
+            "stim2_delay": 140
+        },
+        "cells": {
+            "passiveCell": {
+                "neuroml2_source_file": "passiveCell.cell.nml"
+            },
+            "spkArr1": {
+                "neuroml2_source_file": "inputs.nml"
+            }
+        },
+        "synapses": {
+            "AMPA_postLTD": {
+                "neuroml2_source_file": "fourPathwaySyn.synapse.nml"
+            }
+        },
+        "input_sources": {
+            "stim1": {
+                "parameters": {
+                    "amplitude": 0.4,
+                    "start": "stim1_delay",
+                    "stop": "stim1_delay+5"
+                },
+                "pynn_input": "DCSource"
+            },
+            "stim2": {
+                "parameters": {
+                    "amplitude": 0.4,
+                    "start": "stim2_delay",
+                    "stop": "stim2_delay+5"
+                },
+                "pynn_input": "DCSource"
+            }
+        },
+        "regions": {
+            "region1": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0,
+                "width": 1000.0,
+                "height": 100.0,
+                "depth": 1000.0
+            }
+        },
+        "populations": {
+            "pop0": {
+                "size": 1,
+                "component": "spkArr1",
+                "properties": {
+                    "color": "1 0 0",
+                    "radius": 10
+                },
+                "random_layout": {
+                    "region": "region1"
                 }
-            }, 
-            {
-                "spkArr1": {
-                    "neuroml2_source_file": "inputs.nml"
+            },
+            "pop1": {
+                "size": 1,
+                "component": "passiveCell",
+                "properties": {
+                    "color": "0 1 0"
+                },
+                "random_layout": {
+                    "region": "region1"
                 }
             }
-        ], 
-        "synapses": [
-            {
-                "AMPA_postLTD": {
-                    "neuroml2_source_file": "fourPathwaySyn.synapse.nml"
+        },
+        "projections": {
+            "proj0": {
+                "presynaptic": "pop0",
+                "postsynaptic": "pop1",
+                "synapse": "AMPA_postLTD",
+                "delay": 0,
+                "weight": "weight",
+                "random_connectivity": {
+                    "probability": 1
                 }
             }
-        ], 
-        "input_sources": [
-            {
-                "stim1": {
-                    "pynn_input": "DCSource", 
-                    "parameters": {
-                        "start": "stim1_delay", 
-                        "stop": "stim1_delay+5", 
-                        "amplitude": 0.4
-                    }
-                }
-            }, 
-            {
-                "stim2": {
-                    "pynn_input": "DCSource", 
-                    "parameters": {
-                        "start": "stim2_delay", 
-                        "stop": "stim2_delay+5", 
-                        "amplitude": 0.4
-                    }
-                }
+        },
+        "inputs": {
+            "i_stim1": {
+                "input_source": "stim1",
+                "population": "pop1",
+                "percentage": 100.0
+            },
+            "i_stim2": {
+                "input_source": "stim2",
+                "population": "pop1",
+                "percentage": 100.0
             }
-        ], 
-        "regions": [
-            {
-                "region1": {
-                    "x": 0.0, 
-                    "y": 0.0, 
-                    "z": 0.0, 
-                    "width": 1000.0, 
-                    "height": 100.0, 
-                    "depth": 1000.0
-                }
-            }
-        ], 
-        "populations": [
-            {
-                "pop0": {
-                    "size": 1, 
-                    "component": "spkArr1", 
-                    "properties": {
-                        "color": "1 0 0", 
-                        "radius": 10
-                    }, 
-                    "random_layout": {
-                        "region": "region1"
-                    }
-                }
-            }, 
-            {
-                "pop1": {
-                    "size": 1, 
-                    "component": "passiveCell", 
-                    "properties": {
-                        "color": "0 1 0"
-                    }, 
-                    "random_layout": {
-                        "region": "region1"
-                    }
-                }
-            }
-        ], 
-        "projections": [
-            {
-                "proj0": {
-                    "presynaptic": "pop0", 
-                    "postsynaptic": "pop1", 
-                    "synapse": "AMPA_postLTD", 
-                    "delay": 0, 
-                    "weight": "weight", 
-                    "random_connectivity": {
-                        "probability": 1
-                    }
-                }
-            }
-        ], 
-        "inputs": [
-            {
-                "i_stim1": {
-                    "input_source": "stim1", 
-                    "population": "pop1", 
-                    "percentage": 100.0
-                }
-            }, 
-            {
-                "i_stim2": {
-                    "input_source": "stim2", 
-                    "population": "pop1", 
-                    "percentage": 100.0
-                }
-            }
-        ]
+        }
     }
 }
